@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ситуаційний навігатор — навчальний проєкт</title>
+<style>
+:root{color-scheme:light;--ink:#13212b;--muted:#61717a;--red:#e23736;--line:#dde5e9;--soft:#f4f7f8;--blue:#155e75}
+*{box-sizing:border-box}body{margin:0;font:16px/1.48 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:#eef2f3}
+header{background:var(--ink);color:white;padding:25px max(24px,calc((100vw - 1120px)/2));border-bottom:4px solid var(--red)}
+header .tag{color:#ffc7c7;font-size:12px;letter-spacing:.13em;font-weight:800;text-transform:uppercase}h1{font-size:clamp(25px,4vw,38px);margin:6px 0 6px;letter-spacing:-.03em}header p{max-width:740px;color:#cbd8df;margin:0}
+main{max-width:1170px;margin:24px auto;padding:0 22px 40px;display:grid;grid-template-columns:minmax(300px,420px) minmax(350px,1fr);gap:22px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 5px 22px #17313a0a;padding:25px}.panel h2{font-size:19px;margin:0 0 5px}.caption{font-size:13px;color:var(--muted);margin:0 0 20px}
+label{display:block;font-size:13px;font-weight:750;margin:16px 0 7px}select,textarea{width:100%;border:1px solid #cbd8de;border-radius:9px;padding:12px;font:inherit;background:white;color:var(--ink)}textarea{height:115px;resize:vertical}select:focus,textarea:focus{outline:3px solid #c6e6ee}
+.choice{display:flex;align-items:center;gap:9px;margin:12px 0;font-size:14px;cursor:pointer}.choice input{accent-color:var(--red);width:17px;height:17px}.choice strong{font-weight:650}
+button{font:inherit;cursor:pointer}.primary{border:0;border-radius:9px;background:var(--red);color:white;padding:14px;width:100%;font-weight:760;margin-top:16px}.primary:disabled{opacity:.55;cursor:wait}.secondary{background:transparent;border:1px solid #c5d4da;border-radius:8px;padding:8px 12px;color:var(--ink)}.hint{font-size:12px;color:var(--muted);margin-top:14px}
+.empty{padding:70px 15px;text-align:center;color:var(--muted)}.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:7px}.empty svg{margin-bottom:12px}
+.result-header{display:flex;justify-content:space-between;align-items:start;gap:12px}.pill{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:6px 9px;background:#eaf4f7;color:#266b7c;border-radius:30px;white-space:nowrap}.pill.high{background:#ffebeb;color:#aa2727}
+.note{font-size:13px;background:#fff6ed;color:#814719;padding:11px 13px;border-radius:8px;border-left:3px solid #dfa35d;margin:17px 0}.muted{color:var(--muted)}.h3{font-size:15px;margin:20px 0 9px}
+ol.tasks{list-style:none;margin:0;padding:0;counter-reset:step}ol.tasks li{display:flex;align-items:flex-start;gap:11px;border-bottom:1px solid #eff2f3;padding:11px 0;counter-increment:step}ol.tasks input{accent-color:#1b8575;width:18px;height:18px;flex:none;margin-top:4px}ol.tasks label{display:block;margin:0;font-size:14px;font-weight:450;cursor:pointer;flex:1}ol.tasks input:checked+label{text-decoration:line-through;color:var(--muted)}
+ul{padding-left:20px}li{margin:6px 0;font-size:14px}.warning{color:#a02e22}.warning li{color:#803028}.source{font-size:13px;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}.source a{color:var(--blue);word-break:break-word}.ai{padding:14px;background:#eef7fa;border-radius:9px;margin-top:16px;font-size:14px;white-space:pre-wrap}.progress{font-size:12px;color:#27705b;margin-bottom:4px}.meta{font-size:12px;color:var(--muted)}
+@media(max-width:830px){main{grid-template-columns:1fr}header{padding:22px}.panel{padding:20px}.empty{padding:36px 8px}}
+</style>
+</head>
+<body>
+<header><div class="tag">Локальна LLM · навчальний симулятор</div><h1>Ситуаційний навігатор</h1><p>Допоміжні кроки для працівника поштового відділення: відмова, пошкодження, повернення та інші нестандартні ситуації.</p></header>
+<main>
+<section class="panel" aria-label="Опис ситуації"><h2>Опишіть випадок</h2><p class="caption">Спочатку перевіримо тип ситуації, тоді побудуємо контрольний список. Без реальних ПІБ, телефонів і номерів накладних.</p>
+<label for="case">Сценарій</label><select id="case"><option value="unknown_case">Визначити за описом</option></select>
+<label for="description">Що сталося?</label><textarea id="description" placeholder="Наприклад: клієнт відмовляється від посилки, а коробка має сліди пошкодження"></textarea>
+<label class="choice"><input type="checkbox" id="damaged"><span><strong>Є пошкодження</strong> пакування або вкладення</span></label>
+<label class="choice"><input type="checkbox" id="refused"><span><strong>Отримувач відмовляється</strong> від отримання</span></label>
+<label class="choice"><input type="checkbox" id="llm"><span>Додати коротке пояснення локальної моделі Ollama</span></label>
+<button class="primary" id="analyze">Отримати порядок дій</button><p class="hint">Навчальна логіка працює без Ollama. За ввімкненого пояснення використовується локальний OpenAI-сумісний API.</p>
+</section>
+<section class="panel" aria-live="polite" id="result"><div class="empty"><svg width="62" height="62" viewBox="0 0 62 62" fill="none"><rect x="6" y="7" width="50" height="48" rx="8" stroke="#a0b5bf" stroke-width="2"/><path d="M17 20h28M17 30h28M17 40h18" stroke="#a0b5bf" stroke-width="3" stroke-linecap="round"/></svg><b>План дій з'явиться тут</b>Виберіть ситуацію або введіть її опис.</div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);const E=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el};
+async function init(){try{const r=await fetch('/api/procedures');const data=await r.json();for(const c of data.cases.filter(x=>x.id!=='unknown_case')){const o=E('option','',c.title);o.value=c.id;$('case').append(o)}}catch(e){console.error(e)}}
+function section(title,items,ordered=false,warning=false){const h=E('h3','h3',title);const list=E(ordered?'ol':'ul',ordered?'tasks':warning?'warning':'');if(ordered){items.forEach((s,i)=>{const li=E('li');const c=E('input');c.type='checkbox';c.id='check-'+i;const lbl=E('label','',s);lbl.htmlFor=c.id;li.append(c,lbl);list.append(li)});list.addEventListener('change',()=>{const n=list.querySelectorAll('input:checked').length;const p=document.querySelector('.progress');if(p)p.textContent=`Позначено ${n} з ${items.length} кроків`})}else items.forEach(s=>list.append(E('li','',s)));return [h,list]}
+function display(data){const root=$('result');root.replaceChildren();const top=E('div','result-header');const title=E('div');title.append(E('div','meta','Визначено сценарій'),E('h2','',data.title));const pill=E('span','pill'+(data.priority==='підвищена'?' high':''),data.priority);top.append(title,pill);root.append(top,E('p','note',data.disclaimer));const p=E('p','progress',`Позначено 0 з ${data.steps.length} кроків`);root.append(p,...section('Порядок дій',data.steps,true),...section('Що уточнити',data.ask),...section('Чого не слід робити',data.do_not,false,true));const source=E('div','source');source.append(E('b','',data.source_type));if(data.source){source.append(E('div'));const a=E('a','', 'Відкрити публічне джерело');a.href=data.source;a.rel='noopener noreferrer';a.target='_blank';source.append(a)}root.append(source);if(data.llm){const ai=E('div','ai',data.llm.ok?'Пояснення локальної моделі:\n'+data.llm.text:data.llm.text);root.append(ai)}const btn=E('button','secondary','Скопіювати список');btn.addEventListener('click',()=>navigator.clipboard.writeText(data.title+'\n'+data.steps.map((s,i)=>`${i+1}. ${s}`).join('\n')).then(()=>btn.textContent='Скопійовано').catch(()=>btn.textContent='Не вдалося скопіювати'));root.append(E('div','h3'),btn)}
+$('analyze').addEventListener('click',async()=>{const btn=$('analyze');btn.disabled=true;btn.textContent='Аналізую ситуацію…';try{const r=await fetch('/api/guide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({case_id:$('case').value,description:$('description').value,damaged:$('damaged').checked,refused:$('refused').checked,use_llm:$('llm').checked})});const data=await r.json();if(!r.ok)throw Error(data.error||'Помилка сервера');display(data)}catch(e){const x=$('result');x.replaceChildren(E('h2','','Не вдалося виконати запит'),E('p','warning',e.message))}finally{btn.disabled=false;btn.textContent='Отримати порядок дій'}});
+init();
+</script>
+</body></html>
