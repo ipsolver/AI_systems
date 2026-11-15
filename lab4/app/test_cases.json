@@ -1,12 +1,62 @@
 [
-  {"id":1,"description":"Клієнт створив накладну, але ще не передав посилку та хоче скасувати накладну.","case_id":"unknown_case","expected_id":"cancel_label"},
-  {"id":2,"description":"Одержувач не хоче приймати справну посилку та відмовляється від отримання.","case_id":"recipient_refusal","expected_id":"recipient_refusal"},
-  {"id":3,"description":"Клієнт відмовляється від посилки, бо коробка пошкоджена.","case_id":"recipient_refusal","damaged":true,"refused":true,"expected_id":"recipient_refusal_damage"},
-  {"id":4,"description":"На коробці є тріщина, але клієнт ще не вирішив, чи отримуватиме посилку.","case_id":"unknown_case","expected_id":"damage_without_refusal"},
-  {"id":5,"description":"Під час огляду клієнт каже, що бракує частини вкладення.","case_id":"missing_contents","expected_id":"missing_contents"},
-  {"id":6,"description":"Відправник просить повернути посилку назад, не чекаючи вручення.","case_id":"sender_return","expected_id":"sender_return"},
-  {"id":7,"description":"У даних одержувача допущено помилку в номері телефону.","case_id":"recipient_data_error","expected_id":"recipient_data_error"},
-  {"id":8,"description":"Посилка затрималася, клієнт хоче знати, що робити далі.","case_id":"delivery_delay","expected_id":"delivery_delay"},
-  {"id":9,"description":"Посилка потрапила не до того відділення.","case_id":"wrong_branch","expected_id":"wrong_branch"},
-  {"id":10,"description":"Клієнт каже, що щось не так, але не знає подробиць.","case_id":"unknown_case","expected_id":"unknown_case"}
+  {
+    "id": 1,
+    "description": "Клієнт створив накладну, але ще не передав посилку та хоче скасувати накладну.",
+    "case_id": "unknown_case",
+    "expected_id": "cancel_label"
+  },
+  {
+    "id": 2,
+    "description": "Одержувач не хоче приймати справну посилку та відмовляється від отримання.",
+    "case_id": "unknown_case",
+    "expected_id": "recipient_refusal"
+  },
+  {
+    "id": 3,
+    "description": "Клієнт відмовляється від посилки, бо коробка пошкоджена.",
+    "case_id": "unknown_case",
+    "expected_id": "recipient_refusal_damage"
+  },
+  {
+    "id": 4,
+    "description": "На коробці є тріщина, але клієнт ще не вирішив, чи отримуватиме посилку.",
+    "case_id": "unknown_case",
+    "expected_id": "damage_without_refusal"
+  },
+  {
+    "id": 5,
+    "description": "Під час огляду клієнт каже, що бракує частини вкладення.",
+    "case_id": "unknown_case",
+    "expected_id": "missing_contents"
+  },
+  {
+    "id": 6,
+    "description": "Відправник просить повернути посилку назад, не чекаючи вручення.",
+    "case_id": "unknown_case",
+    "expected_id": "sender_return"
+  },
+  {
+    "id": 7,
+    "description": "У даних одержувача допущено помилку в номері телефону.",
+    "case_id": "unknown_case",
+    "expected_id": "recipient_data_error"
+  },
+  {
+    "id": 8,
+    "description": "Посилка затрималася, клієнт хоче знати, що робити далі.",
+    "case_id": "unknown_case",
+    "expected_id": "delivery_delay"
+  },
+  {
+    "id": 9,
+    "description": "Посилка потрапила не до того відділення.",
+    "case_id": "unknown_case",
+    "expected_id": "wrong_branch"
+  },
+  {
+    "id": 10,
+    "description": "Клієнт каже, що щось не так, але не знає подробиць.",
+    "case_id": "unknown_case",
+    "expected_id": "unknown_case"
+  }
 ]

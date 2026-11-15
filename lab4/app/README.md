@@ -1,93 +1,76 @@
-# Ситуаційний навігатор
+# Ситуаційний навігатор — запуск на Windows
 
-Навчальний вебзастосунок для обробки типових ситуацій у відділенні. Суть не у відкритому чаті: застосунок **спочатку вибирає процедуру зі структурованого JSON**, потім показує фіксований список дій. Локальна модель може додати коротке пояснення, але не змінює саму процедуру.
+Навчальний застосунок; не офіційний регламент поштової компанії. Не вводьте справжні номери накладних та персональні дані. Потрібні Python 3.10+, Ollama, пакет `openai` для бенчмарка. Команди виконуються у PowerShell з каталогу `lab4`.
 
-## 1. Встановлення
+## 1. Підготовка (один раз)
 
-Потрібен Python 3.10+ і [Ollama](https://ollama.com/download).
+Якщо `.venv` уже створено — не створюйте повторно.
 
-```bash
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install openai
 ollama pull qwen3:1.7b-q8_0
 ollama pull qwen3:1.7b-q4_K_M
+ollama create postal-q8 -f app/Modelfile.q8
+ollama create postal-q4 -f app/Modelfile.q4
+ollama list
 ```
 
-Для застосунку достатньо Python без сторонніх пакетів:
+Якщо політика дозволів заважає активувати `.venv`, використовуйте `.\.venv\Scripts\python.exe` замість `python`.
 
-```bash
-cd lab4
-python3 app/main.py
+Для контрольованого порівняння рекомендовано 1 внутрішній паралельний слот; вийдіть із Ollama через значок у системному треї (не просто закрийте вікно), потім у **окремому** PowerShell:
+
+```powershell
+$env:OLLAMA_NUM_PARALLEL = "1"
+ollama serve
 ```
 
-Відкрити **http://127.0.0.1:8765**.
+Залиште цей термінал відкритим. Якщо не змінюєте налаштування рантайму, не вигадуйте значення `OLLAMA_NUM_PARALLEL`. Перевірте `Invoke-RestMethod http://localhost:11434/api/version`. Перед тестами закрийте зайві програми, підключіть зарядку; бажано не менше 6 GiB доступної RAM. Не змінюйте бекенд/режим живлення між моделями.
 
-За замовчуванням обрано `qwen3:1.7b-q4_K_M`. Змінити можна через змінну середовища:
+## 2. Запуск UI і функціональні тести
 
-```bash
-POSTAL_MODEL=qwen3:1.7b-q8_0 python3 app/main.py
+```powershell
+python app/checks.py
+$env:POSTAL_MODEL = "postal-q4"
+python app/main.py
 ```
 
-Ollama має бути активна, щоб працювало необов'язкове поле **«Додати коротке пояснення»**. Контрольний список процедур відкривається навіть без запущеної моделі.
+Відкрийте http://127.0.0.1:8765, введіть «Клієнт відмовляється від отримання посилки, оскільки упаковка має видимі пошкодження». Пояснення Ollama ввімкнено за замовчуванням. Переконайтеся, що під чеклістом є фактичний текст моделі. Якщо ні, надішліть JSON відповіді тестового запиту та повідомлення застосунку. Зупиніть застосунок `Ctrl+C` перед бенчмарком.
 
-## 2. Як працює програма
+`workflow.py` обирає навчальну процедуру зі структурованого `procedures.json`. `llm.py` надсилає короткий опис і картку через локальний OpenAI-сумісний API; інструкції відокремлено від пояснення моделі. `temperature=0`, `seed=1`, `max_tokens=260`, `reasoning_effort=none`, контекст 4096 задано у Modelfile. Індикатор очікування і розділені повідомлення про помилки. Вибір процедури за правилами не гарантує розпізнавання всіх природномовних формулювань.
 
-- Користувач обирає сценарій або вводить короткий опис.
-- `workflow.py` перевіряє слова й пріоритет небезпечних ознак: «відмова + пошкодження» має окрему процедуру.
-- `procedures.json` визначає кроки, уточнення, обмеження та посилання на публічні джерела, якщо вони є.
-- `main.py` показує ці кроки через вебсервер на `127.0.0.1`.
-- За запитом система надсилає тільки навчальну картку в локальну модель через сумісний з OpenAI HTTP API.
-- Відповідь LLM **не підміняє** фіксовані пункти процедури.
+## 3. BEFORE та AFTER
 
-Параметри генерації пояснення: `temperature=0`, `seed=1`, `max_tokens=260`, `stream=False`. Користувач бачить індикатор очікування та повідомлення про недоступну Ollama.
+У CSV вже є заголовок. Якщо замір повторний, збережіть попередній CSV окремо (не змішуйте дублікати); для чистого запуску залиште тільки заголовок. На кожному рівні навантаження 10 промптів, 10 запитів, 1/2/4 клієнти, ліміт 200 токенів.
 
-## 3. Де змінювати сценарії
-
-Файл `app/procedures.json`. Кожна процедура має `id`, `title`, `steps`, `ask`, `do_not` та інформацію про джерело. Навчальний прототип не містить офіційних внутрішніх правил компанії. Внутрішні інструкції не слід додавати до публічного репозиторію без дозволу.
-
-## 4. Перевірка сценаріїв
-
-```bash
-python3 app/checks.py
+```powershell
+ollama stop postal-q4
+python app/bench.py --base-url http://localhost:11434/v1 --model postal-q8 --label before --reasoning-effort none --requests 10 --concurrency 1 2 4 --max-tokens 200 --timeout 180 --prompts app/bench_prompts.txt
+ollama ps | Tee-Object -FilePath demo/runtime_before.txt
+Invoke-RestMethod http://localhost:11434/api/ps | ConvertTo-Json -Depth 10 | Add-Content demo/runtime_before.txt
+python app/quality_eval.py --model postal-q8 --label before
+ollama stop postal-q8
+python app/bench.py --base-url http://localhost:11434/v1 --model postal-q4 --label after --reasoning-effort none --requests 10 --concurrency 1 2 4 --max-tokens 200 --timeout 180 --prompts app/bench_prompts.txt
+ollama ps | Tee-Object -FilePath demo/runtime_after.txt
+Invoke-RestMethod http://localhost:11434/api/ps | ConvertTo-Json -Depth 10 | Add-Content demo/runtime_after.txt
+python app/quality_eval.py --model postal-q4 --label after
 ```
 
-10 навчальних тестів записуються у `demo/routing_results.json`. **Це оцінка алгоритму вибору процедури, а не якості мовної моделі.**
+Якщо є помилки/Thinking, не вважати вимірювання успішним. `ollama ps` описує завантажену модель, а не пікову RAM. Не запускати тести якості паралельно з бенчмарком. `bench.py` (демо викладача) тестує швидкість на окремому наборі 10 промптів; `quality_eval.py` відтворює фактичний системний промпт і параметри застосунку на 10 однакових сценаріях для обох моделей.
 
-Зібрати 10 відповідей моделі для кожної квантизації:
+## 4. Ручне оцінювання
 
-```bash
-python3 app/quality_eval.py --model qwen3:1.7b-q8_0 --label before
-python3 app/quality_eval.py --model qwen3:1.7b-q4_K_M --label after
+```powershell
+python app/review_quality.py --label before
+python app/review_quality.py --label after
+python app/summary.py
 ```
 
-Після цього у `demo/quality_before.json` та `demo/quality_after.json` для кожного тесту з'являться `answer` і `expected_steps`. Потрібно **вручну** оцінити `correct` та дописати `remarks` — не записувати `true` без перевірки.
+Оцінка 1 — правильний маршрут, змістовне пояснення в межах навчальної картки, без вигаданих правил, сум/строків; 0 — помилка, порожній/обірваний текст чи неправильна процедура. Додайте причину. Enter пропускає оцінку; перед здачею не повинно залишатися null. Не запускайте `quality_eval.py` повторно без резервної копії: він перезаписує відповідний JSON. Якщо виправили промпт після реальної помилки, збережіть старі файли та за потреби повторіть тест з `--label revised` для обраної моделі; опишіть факт у звіті.
 
-## 5. Вимірювання продуктивності
+15 автоматичних тестів `checks.py` (10 основних, 5 крайових) перевіряють тільки маршрутизацію, не LLM. Власні оцінки необхідні окремо. Виберіть фінальну модель за швидкістю та якістю й встановіть перед запуском `$env:POSTAL_MODEL = "postal-q4"` або `"postal-q8"`. Запишіть демонстрацію у `demo/demo.mp4`.
 
-Для оригінального скрипта `bench.py` із демо лекції 5 потрібна бібліотека:
+## 5. Ноутбук та здача
 
-```bash
-python3 -m pip install openai
-```
-
-Перебуваючи у папці `lab4`, запустити:
-
-```bash
-python3 app/bench.py --base-url http://localhost:11434/v1 --model qwen3:1.7b-q8_0 --label before --reasoning-effort none --requests 8 --concurrency 1 2 4 --prompts app/bench_prompts.txt
-python3 app/bench.py --base-url http://localhost:11434/v1 --model qwen3:1.7b-q4_K_M --label after --reasoning-effort none --requests 8 --concurrency 1 2 4 --prompts app/bench_prompts.txt
-```
-
-Результати дописуються в `bench_results.csv`. Якщо модель не підтримує `reasoning_effort`, потрібно перевірити сумісність конкретного рантайму та налаштувати вимкнення thinking іншим підтримуваним способом.
-
-## 6. Помилки, безпека, межі
-
-- Не вводити персональні дані реальних клієнтів і справжні номери накладних.
-- Публічні правила про повернення та претензії не замінюють внутрішню інструкцію працівника.
-- Немає інтеграції з реальними базами Нової пошти; програма нічого не скасовує та не оформлює.
-- Якщо модель не відповідає, робота з контрольним списком доступна.
-
-## 7. Зведення результатів
-
-```bash
-python3 app/summary.py
-```
-
-Зведення показує тільки реально наявні вимірювання. Якщо LLM-тест не виконаний або не оцінений вручну, скрипт так і повідомляє. `10/10` маршрутизації не означає `10/10` правильних відповідей мовної моделі.
+Відкрийте `local_models_demo.ipynb` у Colab з T4. Виконайте демо, внесіть `VOTES`, потім відповіді з позначкою РУЧНИЙ КРОК. У секції 1.8 імпортуйте `bench_results.csv`, `demo/quality_before.json`, `demo/quality_after.json`, `demo/routing_results.json`, `demo/runtime_before.txt`, `demo/runtime_after.txt` (і `quality_revised.json` за наявності). Збережіть ноутбук з виводами як `lab4/local_models_demo.ipynb`. Не публікуйте `.venv`, ваги та персональні дані.

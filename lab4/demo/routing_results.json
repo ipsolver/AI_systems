@@ -5,60 +5,105 @@
       "id": 1,
       "expected": "cancel_label",
       "actual": "cancel_label",
+      "description": "Клієнт створив накладну, але ще не передав посилку та хоче скасувати накладну.",
       "passed": true
     },
     {
       "id": 2,
       "expected": "recipient_refusal",
       "actual": "recipient_refusal",
+      "description": "Одержувач не хоче приймати справну посилку та відмовляється від отримання.",
       "passed": true
     },
     {
       "id": 3,
       "expected": "recipient_refusal_damage",
       "actual": "recipient_refusal_damage",
+      "description": "Клієнт відмовляється від посилки, бо коробка пошкоджена.",
       "passed": true
     },
     {
       "id": 4,
       "expected": "damage_without_refusal",
       "actual": "damage_without_refusal",
+      "description": "На коробці є тріщина, але клієнт ще не вирішив, чи отримуватиме посилку.",
       "passed": true
     },
     {
       "id": 5,
       "expected": "missing_contents",
       "actual": "missing_contents",
+      "description": "Під час огляду клієнт каже, що бракує частини вкладення.",
       "passed": true
     },
     {
       "id": 6,
       "expected": "sender_return",
       "actual": "sender_return",
+      "description": "Відправник просить повернути посилку назад, не чекаючи вручення.",
       "passed": true
     },
     {
       "id": 7,
       "expected": "recipient_data_error",
       "actual": "recipient_data_error",
+      "description": "У даних одержувача допущено помилку в номері телефону.",
       "passed": true
     },
     {
       "id": 8,
       "expected": "delivery_delay",
       "actual": "delivery_delay",
+      "description": "Посилка затрималася, клієнт хоче знати, що робити далі.",
       "passed": true
     },
     {
       "id": 9,
       "expected": "wrong_branch",
       "actual": "wrong_branch",
+      "description": "Посилка потрапила не до того відділення.",
       "passed": true
     },
     {
       "id": 10,
       "expected": "unknown_case",
       "actual": "unknown_case",
+      "description": "Клієнт каже, що щось не так, але не знає подробиць.",
+      "passed": true
+    },
+    {
+      "id": 11,
+      "expected": "recipient_refusal",
+      "actual": "recipient_refusal",
+      "description": "Клієнт відмовляється, пошкоджень немає.",
+      "passed": true
+    },
+    {
+      "id": 12,
+      "expected": "damage_without_refusal",
+      "actual": "damage_without_refusal",
+      "description": "Клієнт не відмовляється, але коробка пошкоджена.",
+      "passed": true
+    },
+    {
+      "id": 13,
+      "expected": "recipient_refusal",
+      "actual": "recipient_refusal",
+      "description": "",
+      "passed": true
+    },
+    {
+      "id": 14,
+      "expected": "recipient_refusal_damage",
+      "actual": "recipient_refusal_damage",
+      "description": "",
+      "passed": true
+    },
+    {
+      "id": 15,
+      "expected": "unknown_case",
+      "actual": "unknown_case",
+      "description": "Пошкоджень немає.",
       "passed": true
     }
   ]

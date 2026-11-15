@@ -7,12 +7,13 @@ ROOT = Path(__file__).resolve().parent
 
 def run():
     tests = json.loads((ROOT / "test_cases.json").read_text(encoding="utf-8"))
+    tests += json.loads((ROOT / "edge_cases.json").read_text(encoding="utf-8"))
     results = []
     for case in tests:
         guide = build_guide(case)
         success = guide["id"] == case["expected_id"] and len(guide["steps"]) >= 3
         results.append({"id": case["id"], "expected": case["expected_id"],
-                        "actual": guide["id"], "passed": success})
+                        "actual": guide["id"], "description": case["description"], "passed": success})
         print(f"{case['id']:2d}. {'OK' if success else 'FAIL'}: {case['expected_id']} → {guide['id']}")
     passed = sum(item["passed"] for item in results)
     print(f"Маршрутизація сценаріїв: {passed}/{len(results)}")

@@ -1,0 +1,27 @@
+NAME                ID              SIZE      PROCESSOR    CONTEXT    RUNNER      UNTIL              
+postal-q4:latest    fbaa1942ecbe    1.9 GB    100% CPU     4096       llamacpp    4 minutes from now    
+
+{
+  "models": [
+    {
+      "name": "postal-q4:latest",
+      "model": "postal-q4:latest",
+      "size": 1886629395,
+      "digest": "fbaa1942ecbe0a5e4d70403e60caf4487c8cf2a97a8bf76604c1a1f0b3ead945",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen3",
+        "families": [
+          "qwen3"
+        ],
+        "parameter_size": "2.0B",
+        "quantization_level": "Q4_K_M"
+      },
+      "expires_at": "2026-11-15T14:50:33.0710553+02:00",
+      "size_vram": 0,
+      "context_length": 4096,
+      "runner": "llamacpp"
+    }
+  ]
+}

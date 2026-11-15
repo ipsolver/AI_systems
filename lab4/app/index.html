@@ -29,7 +29,7 @@ ul{padding-left:20px}li{margin:6px 0;font-size:14px}.warning{color:#a02e22}.warn
 <label for="description">Що сталося?</label><textarea id="description" placeholder="Наприклад: клієнт відмовляється від посилки, а коробка має сліди пошкодження"></textarea>
 <label class="choice"><input type="checkbox" id="damaged"><span><strong>Є пошкодження</strong> пакування або вкладення</span></label>
 <label class="choice"><input type="checkbox" id="refused"><span><strong>Отримувач відмовляється</strong> від отримання</span></label>
-<label class="choice"><input type="checkbox" id="llm"><span>Додати коротке пояснення локальної моделі Ollama</span></label>
+<label class="choice"><input type="checkbox" id="llm" checked><span>Додати коротке пояснення локальної моделі Ollama</span></label>
 <button class="primary" id="analyze">Отримати порядок дій</button><p class="hint">Навчальна логіка працює без Ollama. За ввімкненого пояснення використовується локальний OpenAI-сумісний API.</p>
 </section>
 <section class="panel" aria-live="polite" id="result"><div class="empty"><svg width="62" height="62" viewBox="0 0 62 62" fill="none"><rect x="6" y="7" width="50" height="48" rx="8" stroke="#a0b5bf" stroke-width="2"/><path d="M17 20h28M17 30h28M17 40h18" stroke="#a0b5bf" stroke-width="3" stroke-linecap="round"/></svg><b>План дій з'явиться тут</b>Виберіть ситуацію або введіть її опис.</div></section>
