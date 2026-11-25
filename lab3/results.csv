@@ -1,0 +1,5 @@
+section,model,val_loss,accuracy,f1,time_sec,parameters
+Mini-GPT,v1_2layers,6.034169212977091,,,42.78,2460224
+Mini-GPT,v2_4layers,5.8810271581014,,,77.68,2856000
+Sentiment,XLM-RoBERTa,,1.0,1.0,0.062,278045955
+Sentiment,DistilBERT,,0.85,0.8421052631578947,0.038,135326979
