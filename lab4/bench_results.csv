@@ -1,7 +1,0 @@
-label,model,concurrency,requests,errors,ttft_p50_s,ttft_p95_s,tokens_per_s_per_user_p50,throughput_tokens_per_s,reasoning
-before,postal-q8,1,4,0,2.57,2.689,19.4,15.3,False
-before,postal-q8,2,4,0,10.718,12.652,20.1,17.7,False
-before,postal-q8,4,4,0,20.949,36.601,17.7,16.5,False
-after,postal-q4,1,4,0,2.306,2.333,28.0,21.3,False
-after,postal-q4,2,4,0,7.361,9.172,28.4,26.0,False
-after,postal-q4,4,4,0,13.244,23.039,28.0,25.6,False

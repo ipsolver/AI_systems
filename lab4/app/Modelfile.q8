@@ -1,2 +1,0 @@
-FROM qwen3:1.7b-q8_0
-PARAMETER num_ctx 4096
